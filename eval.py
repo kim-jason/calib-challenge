@@ -6,7 +6,7 @@ if len(sys.argv) > 1:
   TEST_DIR = sys.argv[1]
 else:
   raise RuntimeError('No test directory provided')
-GT_DIR = 'labeled/'
+GT_DIR = './labeled/'
 
 def get_mse(gt, test):
   test = np.nan_to_num(test)
@@ -17,6 +17,8 @@ zero_mses = []
 mses = []
 
 for i in range(0,5):
+  print("HEDSF")
+  print(GT_DIR + str(i) + '.txt')
   gt = np.loadtxt(GT_DIR + str(i) + '.txt')
   zero_mses.append(get_mse(gt, np.zeros_like(gt)))
 
