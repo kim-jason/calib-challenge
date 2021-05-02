@@ -17,8 +17,6 @@ zero_mses = []
 mses = []
 
 for i in range(0,5):
-  print("HEDSF")
-  print(GT_DIR + str(i) + '.txt')
   gt = np.loadtxt(GT_DIR + str(i) + '.txt')
   zero_mses.append(get_mse(gt, np.zeros_like(gt)))
 
