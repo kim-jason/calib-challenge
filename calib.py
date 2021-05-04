@@ -1,8 +1,11 @@
 import cv2
 import glob
-import tensorflow as tf
+#import tensorflow as tf
 import numpy as np
 import itertools
+from keras.models import Sequential
+from keras.layers import Conv2D, MaxPooling2D, AveragePooling2D, Conv1D, MaxPooling1D
+from keras.layers import Dense, Activation, Dropout, Flatten
 
 #####CODE: SAVE ALL VIDEO FRAMES AS .JPG FOR THE FIVE LABELED VIDEOS#####
 # num_vids = 5 # Harded coded in
@@ -20,20 +23,21 @@ import itertools
 # print("Finished")
 
 
-#####CODE: Create all the input arrays from the frames#####
-# images = {}
+####CODE: Create all the input arrays from the frames#####
+images = {}
 
-# for num_image in range(5):
-#     image = glob.glob("./labeled/{num_image}/*.jpg".format(num_image = num_image))
-#     images[num_image] = []
+for num_image in range(5):
+    image = glob.glob("./labeled/{num_image}/*.jpg".format(num_image = num_image))
+    images[num_image] = []
 
-#     for num_frame in range(len(image)):
-#         frame = cv2.imread(image[num_frame])
-#         frame = frame.reshape(-1).astype('float64')
-#         frame /= 255.0
-#         images[num_image].append(frame)
+    for num_frame in range(len(image)):
+        frame = cv2.imread(image[num_frame])
+        frame = frame.reshape(-1).astype('float64')
+        frame /= 255.0
+        images[num_image].append(frame)
 
-# frames = list(itertools.chain.from_iterable(list(images.values())))
+frames = list(itertools.chain.from_iterable(list(images.values())))
+print(frames[0].shape)
 
 
 #####CODE: Create all the output values for each frame in the same order#####
@@ -54,6 +58,25 @@ for value in values:
     
     pitch_values.append(pitch)
     yaw_values.append(yaw)
+
+
+
+# Configure the neural network model
+model = Sequential()
+
+# Model with 100 Neurons - inputshape = 100 Timestamps
+model.add(LSTM(100, return_sequences=True, input_shape=(128, 128, 3)))
+model.add(LSTM(100, return_sequences=False))
+model.add(Dense(25, activation='relu'))
+model.add(Dense(1))
+
+# Compile the model
+model.compile(optimizer='adam', loss='mean_squared_error')
+
+model.summary()
+
+model.fit(frames, pitch_values, batch_size = 16, epochs=10)
+
 
 
 
